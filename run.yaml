@@ -201,8 +201,8 @@ providers:
     config:
       kvstore:
         type: sqlite
-        namespace: null
-        db_path: /app-root/vector_db/rhdh_product_docs/1.7/faiss_store.db
+        namespace:
+        db_path: /app-root/vector_db/rhdh_product_docs/1.8/faiss_store.db
 scoring_fns: []
 server:
   auth: null
@@ -223,4 +223,4 @@ vector_dbs:
 - embedding_dimension: 768
   embedding_model: sentence-transformers/all-mpnet-base-v2
   provider_id: rhdh-docs
-  vector_db_id: rhdh-product-docs-1_7
+  vector_db_id: rhdh-product-docs-1_8

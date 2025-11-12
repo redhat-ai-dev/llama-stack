@@ -1,4 +1,7 @@
-RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:release-1.7-lcs
+RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:release-1.8-lcs
+VENV := $(CURDIR)/scripts/python-scripts/.venv
+PYTHON := $(VENV)/bin/python3
+PIP := $(VENV)/bin/pip3
 
 default: help
 
