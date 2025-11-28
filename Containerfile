@@ -41,7 +41,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=UTF-8 \
     LANG=en_US.UTF-8
 
-RUN mkdir -p /licenses
+RUN mkdir /licenses
 COPY LICENSE /licenses/
 
 COPY --from=builder --chown=1001:1001 /app-root/.venv ./.venv
@@ -57,5 +57,19 @@ ENV PATH="/app-root/.venv/bin:$PATH"
 EXPOSE 8321
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+# Labels for enterprise contract
+LABEL com.redhat.component=rhdh-lightspeed-llama-stack
+LABEL description="Red Hat Developer Hub Lightspeed Llama Stack"
+LABEL distribution-scope=private
+LABEL io.k8s.description="Red Hat Developer Hub Lightspeed Llama Stack"
+LABEL io.k8s.display-name="Red Hat Developer Hub Lightspeed Llama Stack"
+LABEL io.openshift.tags="developerhub,rhdh,lightspeed,ai,assistant,llama"
+LABEL name=rhdh-lightspeed-llama-stack
+LABEL release=1.8
+LABEL url="https://github.com/redhat-ai-dev/llama-stack"
+LABEL vendor="Red Hat, Inc."
+LABEL version=0.1.0
+LABEL summary="Red Hat Developer Hub Lightspeed Llama Stack"
 
 USER 1001
