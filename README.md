@@ -1,5 +1,7 @@
 # Redhat-AI-Dev Llama Stack
 
+[![Apache2.0 License](https://img.shields.io/badge/license-Apache2.0-brightgreen.svg)](LICENSE)
+
 - [Image Availability](#image-availability)
 - [Usage](#usage)
   - [Available Inferences](#available-inferences)
