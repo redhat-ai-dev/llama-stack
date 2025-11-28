@@ -70,8 +70,8 @@ providers:
     - provider_id: ${env.ENABLE_VLLM:+vllm}
       provider_type: remote::vllm
       config:
-        url: ${env.VLLM_URL}
-        api_token: ${env.VLLM_API_KEY}
+        url: ${env.VLLM_URL:=}
+        api_token: ${env.VLLM_API_KEY:=}
         max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
         tls_verify: ${env.VLLM_TLS_VERIFY:=true}
     - provider_id: ${env.ENABLE_OLLAMA:+ollama}
