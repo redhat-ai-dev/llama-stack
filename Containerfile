@@ -30,6 +30,7 @@ COPY ./pyproject.toml ./
 RUN uv sync --no-dev
 
 FROM registry.access.redhat.com/ubi9/python-312-minimal:9.7@sha256:2ac60c655288a88ec55df5e2154b9654629491e3c58b5c54450fb3d27a575cb6
+USER root
 ARG APP_ROOT=/app-root
 WORKDIR /app-root
 
@@ -40,7 +41,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=UTF-8 \
     LANG=en_US.UTF-8
 
-RUN mkdir /licenses
+RUN mkdir -p /licenses
 COPY LICENSE /licenses/
 
 COPY --from=builder --chown=1001:1001 /app-root/.venv ./.venv
