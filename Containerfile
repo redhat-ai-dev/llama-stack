@@ -41,7 +41,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=UTF-8 \
     LANG=en_US.UTF-8
 
-RUN mkdir /licenses
+RUN mkdir -p /licenses
 COPY LICENSE /licenses/
 
 COPY --from=builder --chown=1001:1001 /app-root/.venv ./.venv
