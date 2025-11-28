@@ -74,7 +74,7 @@ OLLAMA_URL=<your-ollama-url>
 
 The value of `OLLAMA_URL` is the default `http://localhost:11434`, when you are not running this llama-stack inside a container i.e.; if you run llama-stack directly on your laptop terminal, your llama-stack can reference and network with the Ollama at localhost.
 
-The value of `OLLAMA_URL` is `http://host.containers.internal:11434` if you are running llama-stack inside a container i.e.; if you run llama-stack with the podman run command above, it needs to access the Ollama endpoint on your laptop not inside the container.
+The value of `OLLAMA_URL` is `http://host.containers.internal:11434` if you are running llama-stack inside a container i.e.; if you run llama-stack with the podman run command above, it needs to access the Ollama endpoint on your laptop not inside the container. **If you are using Linux**, ensure your firewall allows port 11434 to your podman container's network, some Linux distributions firewalls block all traffic by default. Alternatively you can use `OLLAMA_URL=http://localhost:11434` and set the `--network host` flag when you run your podman container.
 
 #### OpenAI
 
@@ -117,8 +117,14 @@ By default this Llama Stack has a Safety Shield for question validation enabled.
 
 ### Running Locally
 
+To run llama-stack locally:
 ```
 podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+```
+
+Or if using the host network:
+```
+podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
 Latest Lightspeed Core developer image:
