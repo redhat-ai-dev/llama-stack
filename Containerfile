@@ -30,7 +30,6 @@ COPY ./pyproject.toml ./
 RUN uv sync --no-dev
 
 FROM registry.access.redhat.com/ubi9/python-312-minimal:9.7@sha256:2ac60c655288a88ec55df5e2154b9654629491e3c58b5c54450fb3d27a575cb6
-USER root
 ARG APP_ROOT=/app-root
 WORKDIR /app-root
 
@@ -40,9 +39,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUTF8=1 \
     PYTHONIOENCODING=UTF-8 \
     LANG=en_US.UTF-8
-
-RUN mkdir -p /licenses
-COPY LICENSE /licenses/
 
 COPY --from=builder --chown=1001:1001 /app-root/.venv ./.venv
 
@@ -58,6 +54,13 @@ EXPOSE 8321
 
 ENTRYPOINT ["./entrypoint.sh"]
 
+USER root
+
+RUN mkdir -p /licenses
+COPY LICENSE /licenses/
+
+USER 1001
+
 # Labels for enterprise contract
 LABEL com.redhat.component=rhdh-lightspeed-llama-stack
 LABEL description="Red Hat Developer Hub Lightspeed Llama Stack"
@@ -71,5 +74,3 @@ LABEL url="https://github.com/redhat-ai-dev/llama-stack"
 LABEL vendor="Red Hat, Inc."
 LABEL version=0.1.0
 LABEL summary="Red Hat Developer Hub Lightspeed Llama Stack"
-
-USER 1001
