@@ -72,5 +72,5 @@ LABEL name=rhdh-lightspeed-llama-stack
 LABEL release=1.8
 LABEL url="https://github.com/redhat-ai-dev/llama-stack"
 LABEL vendor="Red Hat, Inc."
-LABEL version=0.1.0
+LABEL version=0.1.1
 LABEL summary="Red Hat Developer Hub Lightspeed Llama Stack"
