@@ -117,7 +117,6 @@ By default this Llama Stack has a Safety Shield for question validation enabled.
 
 ### Running Locally
 
-To run llama-stack locally:
 ```
 podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
