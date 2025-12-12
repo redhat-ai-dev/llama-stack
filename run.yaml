@@ -15,18 +15,13 @@
 # limitations under the License.
 version: '2'
 image_name: redhat-ai-dev-llama-stack
-
 apis:
   - agents
-  - datasetio
-  - eval
   - inference
-  - post_training
   - safety
-  - scoring
-  - telemetry
   - tool_runtime
   - vector_io
+  - files
 benchmarks: []
 container_image:
 datasets: []
@@ -58,29 +53,6 @@ providers:
           type: sqlite
       provider_id: meta-reference
       provider_type: inline::meta-reference
-  datasetio:
-    - config:
-        kvstore:
-          db_path: .llama/distributions/ollama/huggingface_datasetio.db
-          namespace:
-          type: sqlite
-      provider_id: huggingface
-      provider_type: remote::huggingface
-    - config:
-        kvstore:
-          db_path: .llama/distributions/ollama/localfs_datasetio.db
-          namespace:
-          type: sqlite
-      provider_id: localfs
-      provider_type: inline::localfs
-  eval:
-    - config:
-        kvstore:
-          db_path: .llama/distributions/ollama/meta_reference_eval.db
-          namespace:
-          type: sqlite
-      provider_id: meta-reference
-      provider_type: inline::meta-reference
   inference:
     - provider_id: ${env.ENABLE_VLLM:+vllm}
       provider_type: remote::vllm
@@ -105,19 +77,7 @@ providers:
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
       config: {}
-  post_training:
-    - config:
-        checkpoint_format: huggingface
-        device: cpu
-        distributed_backend:
-        dpo_output_dir: '.'
-      provider_id: huggingface
-      provider_type: inline::huggingface
   safety:
-    - config:
-        excluded_categories: []
-      provider_id: llama-guard
-      provider_type: inline::llama-guard
     - provider_id: lightspeed_question_validity
       provider_type: inline::lightspeed_question_validity
       config:
@@ -183,24 +143,6 @@ providers:
         invalid_question_response: |-
           Hi, I'm the Red Hat Developer Hub Lightspeed assistant, I can help you with questions about Red Hat Developer Hub or Backstage.
           Please ensure your question is about these topics, and feel free to ask again!
-  scoring:
-    - config: {}
-      provider_id: basic
-      provider_type: inline::basic
-    - config: {}
-      provider_id: llm-as-judge
-      provider_type: inline::llm-as-judge
-    - config:
-        openai_api_key: '********'
-      provider_id: braintrust
-      provider_type: inline::braintrust
-  telemetry:
-    - config:
-        service_name: 'lightspeed-stack-telemetry'
-        sinks: sqlite
-        sqlite_db_path: .llama/distributions/ollama/trace_store.db
-      provider_id: meta-reference
-      provider_type: inline::meta-reference
   tool_runtime:
     - provider_id: model-context-protocol
       provider_type: remote::model-context-protocol
@@ -209,20 +151,21 @@ providers:
       provider_type: inline::rag-runtime
       config: {}
   vector_io:
-    - config:
-        kvstore:
-          db_path: .llama/distributions/ollama/faiss_store.db
-          namespace:
-          type: sqlite
-      provider_id: faiss
-      provider_type: inline::faiss
-    - provider_id: rhdh-docs
+    - provider_id: rhdh-product-docs-1_8
       provider_type: inline::faiss
       config:
         kvstore:
           type: sqlite
           namespace:
           db_path: /app-root/vector_db/rhdh_product_docs/1.8/faiss_store.db
+  files:
+    - provider_id: localfs
+      provider_type: inline::localfs
+      config:
+        storage_dir: /tmp/llama-stack-files
+        metadata_store:
+          type: sqlite
+          db_path: files_metadata.db
 scoring_fns: []
 server:
   auth:
@@ -242,5 +185,7 @@ tool_groups:
 vector_dbs:
   - embedding_dimension: 768
     embedding_model: sentence-transformers/all-mpnet-base-v2
-    provider_id: rhdh-docs
+    provider_id: rhdh-product-docs-1_8
     vector_db_id: rhdh-product-docs-1_8
+    provider_vector_db_id: rhdh-product-docs-1_8
+    vector_store_id: rhdh-product-docs-1_8
