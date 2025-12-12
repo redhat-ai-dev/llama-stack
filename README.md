@@ -127,6 +127,10 @@ Or if using the host network:
 podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
+> [!WARNING]
+> This repository is currently running Llama Stack v0.2.22. This version is incompatible with Llama Stack >= 0.3.x. Due to these limitations, the latest image we can consume from Lightspeed Core is `quay.io/lightspeed-core/lightspeed-stack:dev-20251208-f20efb9`.
+>
+
 Latest Lightspeed Core Developer Image:
 ```
 quay.io/lightspeed-core/lightspeed-stack:dev-latest
