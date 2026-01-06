@@ -111,7 +111,11 @@ This will fetch the necessary reference content and add it to your local project
 
 ### Configuring Question Validation
 
-By default this Llama Stack has a Safety Shield for question validation enabled. You will need to set the following environment variables to ensure functionality:
+> [!IMPORTANT]
+> Currently question validation is removed from the default run.yaml file.
+> This is due to the way Llama Stack Safety Shields are intended to be used in v0.3 and above.
+
+You will need to set the following environment variables to ensure functionality:
 
 - `VALIDATION_PROVIDER`: The provider you want to use for question validation. This should match what the provider value you are using under `inference`, such as `vllm`, `ollama`, `openai`. Defaults to `vllm`
 - `VALIDATION_MODEL_NAME`: The name of the LLM you want to use for question validation
@@ -127,7 +131,7 @@ Or if using the host network:
 podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
-Latest Lightspeed Core developer image:
+Latest Lightspeed Core Developer Image:
 ```
 quay.io/lightspeed-core/lightspeed-stack:dev-latest
 ```
