@@ -5,3 +5,7 @@ embeddings_model
 vector_db
 
 values.env
+
+.venv
+
+node_modules

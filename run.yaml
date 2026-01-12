@@ -1,5 +1,20 @@
+#
+#
+# Copyright Red Hat
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 version: '2'
-image_name: minimal-viable-llama-stack-configuration
+image_name: redhat-ai-dev-llama-stack
 
 apis:
   - agents
@@ -13,86 +28,91 @@ apis:
   - tool_runtime
   - vector_io
 benchmarks: []
-container_image: null
+container_image:
 datasets: []
-external_providers_dir: "/app-root/config/providers.d"
+external_providers_dir: '/app-root/config/providers.d'
 inference_store:
   db_path: .llama/distributions/ollama/inference_store.db
   type: sqlite
-logging: null
+logging:
 metadata_store:
   db_path: .llama/distributions/ollama/registry.db
-  namespace: null
+  namespace:
   type: sqlite
 models:
-- model_id: sentence-transformers/all-mpnet-base-v2
-  metadata:
+  - model_id: sentence-transformers/all-mpnet-base-v2
+    metadata:
       embedding_dimension: 768
-  model_type: embedding
-  provider_id: sentence-transformers
-  provider_model_id: "/app-root/embeddings_model"
+    model_type: embedding
+    provider_id: sentence-transformers
+    provider_model_id: '/app-root/embeddings_model'
 providers:
   agents:
-  - config:
-      persistence_store:
-        db_path: .llama/distributions/ollama/agents_store.db
-        namespace: null
-        type: sqlite
-      responses_store:
-        db_path: .llama/distributions/ollama/responses_store.db
-        type: sqlite
-    provider_id: meta-reference
-    provider_type: inline::meta-reference
+    - config:
+        persistence_store:
+          db_path: .llama/distributions/ollama/agents_store.db
+          namespace:
+          type: sqlite
+        responses_store:
+          db_path: .llama/distributions/ollama/responses_store.db
+          type: sqlite
+      provider_id: meta-reference
+      provider_type: inline::meta-reference
   datasetio:
-  - config:
-      kvstore:
-        db_path: .llama/distributions/ollama/huggingface_datasetio.db
-        namespace: null
-        type: sqlite
-    provider_id: huggingface
-    provider_type: remote::huggingface
-  - config:
-      kvstore:
-        db_path: .llama/distributions/ollama/localfs_datasetio.db
-        namespace: null
-        type: sqlite
-    provider_id: localfs
-    provider_type: inline::localfs
+    - config:
+        kvstore:
+          db_path: .llama/distributions/ollama/huggingface_datasetio.db
+          namespace:
+          type: sqlite
+      provider_id: huggingface
+      provider_type: remote::huggingface
+    - config:
+        kvstore:
+          db_path: .llama/distributions/ollama/localfs_datasetio.db
+          namespace:
+          type: sqlite
+      provider_id: localfs
+      provider_type: inline::localfs
   eval:
-  - config:
-      kvstore:
-        db_path: .llama/distributions/ollama/meta_reference_eval.db
-        namespace: null
-        type: sqlite
-    provider_id: meta-reference
-    provider_type: inline::meta-reference
+    - config:
+        kvstore:
+          db_path: .llama/distributions/ollama/meta_reference_eval.db
+          namespace:
+          type: sqlite
+      provider_id: meta-reference
+      provider_type: inline::meta-reference
   inference:
-    - provider_id: vllm
+    - provider_id: ${env.ENABLE_VLLM:+vllm}
       provider_type: remote::vllm
       config:
-        url: ${env.VLLM_URL}
-        api_token: ${env.VLLM_API_KEY}
+        url: ${env.VLLM_URL:=}
+        api_token: ${env.VLLM_API_KEY:=}
         max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
         tls_verify: ${env.VLLM_TLS_VERIFY:=true}
-    # - provider_id: ollama
-    #   provider_type: remote::ollama
-    #   config:
-    #     url: ${env.OLLAMA_URL:=http://localhost:11434}
-    # - provider_id: openai
-    #   provider_type: remote::openai
-    #   config:
-    #     api_key: ${env.OPENAI_API_KEY}
+    - provider_id: ${env.ENABLE_OLLAMA:+ollama}
+      provider_type: remote::ollama
+      config:
+        url: ${env.OLLAMA_URL:=http://localhost:11434}
+    - provider_id: ${env.ENABLE_OPENAI:+openai}
+      provider_type: remote::openai
+      config:
+        api_key: ${env.OPENAI_API_KEY:=}
+    - provider_id: ${env.ENABLE_VERTEX_AI:+vertexai}
+      provider_type: remote::vertexai
+      config:
+        project: ${env.VERTEX_AI_PROJECT:=}
+        location: ${env.VERTEX_AI_LOCATION:=us-central1}
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
       config: {}
   post_training:
-  - config:
-      checkpoint_format: huggingface
-      device: cpu
-      distributed_backend: null
-      dpo_output_dir: "."
-    provider_id: huggingface
-    provider_type: inline::huggingface
+    - config:
+        checkpoint_format: huggingface
+        device: cpu
+        distributed_backend:
+        dpo_output_dir: '.'
+      provider_id: huggingface
+      provider_type: inline::huggingface
   safety:
     - config:
         excluded_categories: []
@@ -108,6 +128,10 @@ providers:
           You area question classification tool. You are an expert in the following categories:
           - Backstage
           - Red Hat Developer Hub (RHDH)
+          - Developer Lightspeed
+          - Lightspeed
+          - Artificial Intelligence (AI) Models
+          - Large Language Models (LLMs)
           - Kubernetes
           - Openshift
           - CI/CD
@@ -118,7 +142,7 @@ providers:
           - Software Catalogs
           - Software Templates
           - Tech Docs
-          
+
           Your job is to determine if a user's question is related to the categories you are an expert in. If the question is related to those categories, \
           or any features that may be related to those categories, you will answer with ${allowed}.
 
@@ -164,63 +188,63 @@ providers:
           Hi, I'm the Red Hat Developer Hub Lightspeed assistant, I can help you with questions about Red Hat Developer Hub or Backstage.
           Please ensure your question is about these topics, and feel free to ask again!
   scoring:
-  - config: {}
-    provider_id: basic
-    provider_type: inline::basic
-  - config: {}
-    provider_id: llm-as-judge
-    provider_type: inline::llm-as-judge
-  - config:
-      openai_api_key: '********'
-    provider_id: braintrust
-    provider_type: inline::braintrust
+    - config: {}
+      provider_id: basic
+      provider_type: inline::basic
+    - config: {}
+      provider_id: llm-as-judge
+      provider_type: inline::llm-as-judge
+    - config:
+        openai_api_key: '********'
+      provider_id: braintrust
+      provider_type: inline::braintrust
   telemetry:
-  - config:
-      service_name: 'lightspeed-stack-telemetry'
-      sinks: sqlite
-      sqlite_db_path: .llama/distributions/ollama/trace_store.db
-    provider_id: meta-reference
-    provider_type: inline::meta-reference
+    - config:
+        service_name: 'lightspeed-stack-telemetry'
+        sinks: sqlite
+        sqlite_db_path: .llama/distributions/ollama/trace_store.db
+      provider_id: meta-reference
+      provider_type: inline::meta-reference
   tool_runtime:
-  - provider_id: model-context-protocol
-    provider_type: remote::model-context-protocol
-    config: {}
-  - provider_id: rag-runtime 
-    provider_type: inline::rag-runtime
-    config: {}
+    - provider_id: model-context-protocol
+      provider_type: remote::model-context-protocol
+      config: {}
+    - provider_id: rag-runtime
+      provider_type: inline::rag-runtime
+      config: {}
   vector_io:
-  - config:
-      kvstore:
-        db_path: .llama/distributions/ollama/faiss_store.db
-        namespace: null
-        type: sqlite
-    provider_id: faiss
-    provider_type: inline::faiss
-  - provider_id: rhdh-docs 
-    provider_type: inline::faiss
-    config:
-      kvstore:
-        type: sqlite
-        namespace:
-        db_path: /app-root/vector_db/rhdh_product_docs/1.8/faiss_store.db
+    - config:
+        kvstore:
+          db_path: .llama/distributions/ollama/faiss_store.db
+          namespace:
+          type: sqlite
+      provider_id: faiss
+      provider_type: inline::faiss
+    - provider_id: rhdh-docs
+      provider_type: inline::faiss
+      config:
+        kvstore:
+          type: sqlite
+          namespace:
+          db_path: /app-root/vector_db/rhdh_product_docs/1.8/faiss_store.db
 scoring_fns: []
 server:
-  auth: null
-  host: null
+  auth:
+  host:
   port: 8321
-  quota: null
-  tls_cafile: null
-  tls_certfile: null
-  tls_keyfile: null
+  quota:
+  tls_cafile:
+  tls_certfile:
+  tls_keyfile:
 shields:
   - shield_id: lightspeed_question_validity-shield
     provider_id: lightspeed_question_validity
 tool_groups:
-- provider_id: rag-runtime
-  toolgroup_id: builtin::rag
-  description: "Only use for questions specifically about Red Hat Developer Hub (RHDH). Searches technical documentation for RHDH installation, discovery, configuration, release, upgrade, control access, integration, observability, and extending with plugins. Do not use for any other topic outside RHDH."
+  - provider_id: rag-runtime
+    toolgroup_id: builtin::rag
+    description: 'Only use for questions specifically about Red Hat Developer Hub (RHDH). Searches technical documentation for RHDH installation, discovery, configuration, release, upgrade, control access, integration, observability, and extending with plugins. Do not use for any other topic outside RHDH.'
 vector_dbs:
-- embedding_dimension: 768
-  embedding_model: sentence-transformers/all-mpnet-base-v2
-  provider_id: rhdh-docs
-  vector_db_id: rhdh-product-docs-1_8
+  - embedding_dimension: 768
+    embedding_model: sentence-transformers/all-mpnet-base-v2
+    provider_id: rhdh-docs
+    vector_db_id: rhdh-product-docs-1_8

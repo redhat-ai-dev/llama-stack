@@ -1,0 +1,12 @@
+{
+  "name": "formatter-tools",
+  "private": true,
+  "devDependencies": {
+    "prettier": "^3.2.0"
+  },
+  "scripts": {
+    "format": "prettier --write '{run,lightspeed-stack}.{yaml,yml}'",
+    "verify": "prettier --check '{run,lightspeed-stack}.{yaml,yml}'"
+  },
+  "version": "0.1.0"
+}
