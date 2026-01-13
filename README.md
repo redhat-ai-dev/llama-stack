@@ -123,12 +123,12 @@ You will need to set the following environment variables to ensure functionality
 ### Running Locally
 
 ```
-podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
 Or if using the host network:
 ```
-podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/app-root/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/app-root/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
 ```
 
 Latest Lightspeed Core Developer Image:
