@@ -7,8 +7,8 @@ dependencies = [
     "fastapi>=0.115.6",
     "uvicorn>=0.34.3",
     "kubernetes>=30.1.0",
-    "llama-stack==0.3.4",
-    "llama-stack-client==0.3.4",
+    "llama-stack==0.3.5",
+    "llama-stack-client==0.3.5",
     "ollama>=0.2.0",
     "openai>=1.100.0",
     "rich>=14.0.0",
@@ -36,6 +36,7 @@ dependencies = [
     "sentence-transformers>=5.0.0",
     "pydantic>=2.10.6",
     "httpx",
+    "chardet",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"

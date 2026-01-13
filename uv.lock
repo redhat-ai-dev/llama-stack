@@ -253,6 +253,15 @@ wheels = [
 ]
 
 [[package]]
+name = "chardet"
+version = "5.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/0d/f7b6ab21ec75897ed80c17d79b15951a719226b9fababf1e40ea74d69079/chardet-5.2.0.tar.gz", hash = "sha256:1b3b6ff479a8c414bc3fa2c0852995695c4a026dcd6d0633b2dd092ca39c1cf7", size = 2069618, upload-time = "2023-08-01T19:23:02.662Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/38/6f/f5fbc992a329ee4e0f288c1fe0e2ad9485ed064cac731ed2fe47dcc38cbf/chardet-5.2.0-py3-none-any.whl", hash = "sha256:e1cf59446890a00105fe7b7912492ea04b6e6f06d4b742b2c788469e34c82970", size = 199385, upload-time = "2023-08-01T19:23:00.661Z" },
+]
+
+[[package]]
 name = "charset-normalizer"
 version = "3.4.3"
 source = { registry = "https://pypi.org/simple" }
@@ -786,7 +795,7 @@ wheels = [
 
 [[package]]
 name = "llama-stack"
-version = "0.3.4"
+version = "0.3.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -815,14 +824,14 @@ dependencies = [
     { name = "tiktoken" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8f/c5/ade666e8ce894066c0358988e831b31c81840e7b285aa8b5f70236e33681/llama_stack-0.3.4.tar.gz", hash = "sha256:bdb489e4341559465d604c9eba554460ab0d17c5dc005ee2d40aa892b94e2e9b", size = 3322494, upload-time = "2025-12-03T19:00:18.397Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/af/68/967f95e5fe3a650b9bb6a18c4beeb39e734695d92f1ab1525c5b9bfadb1b/llama_stack-0.3.5.tar.gz", hash = "sha256:4a0ce8014b17d14a06858251736f1170f12580fafc519daf75ee1df6c4fbf64b", size = 3320526, upload-time = "2025-12-15T14:34:32.96Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/49/14/c98e5b564b425e4fc7aabf33f4bf9f40c43057424a555f023bcd8e334874/llama_stack-0.3.4-py3-none-any.whl", hash = "sha256:3e302db1efb2ed6c974526b8c6b04b9e54891f3959d0d83c004f77e1c21f6147", size = 3637817, upload-time = "2025-12-03T19:00:16.581Z" },
+    { url = "https://files.pythonhosted.org/packages/24/70/fb1896f07fc38a94b4c0bfb5999872d1514c6b3259fe77358cadef77a3db/llama_stack-0.3.5-py3-none-any.whl", hash = "sha256:93097409c65108e429fc3dda2f246ef4e8d0b07314a32865e941680e537ec366", size = 3636815, upload-time = "2025-12-15T14:34:31.354Z" },
 ]
 
 [[package]]
 name = "llama-stack-client"
-version = "0.3.4"
+version = "0.3.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -841,9 +850,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/10/9c198c62e720c647a01506f40ba4e058a5b2a23c947fab1827eb096a94f2/llama_stack_client-0.3.4.tar.gz", hash = "sha256:6afbd10b152911a044e8d038e58981425ce0a34510da3e31cdd3103516e27688", size = 335668, upload-time = "2025-12-03T18:59:25.48Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/34/ff/b4bb891249379849e6e273a6254998c7e08562613ca4020817af2da9498e/llama_stack_client-0.3.5.tar.gz", hash = "sha256:2d954429347e920038709ae3e026c06f336ce570bd41245fc4e1e54c78879485", size = 335659, upload-time = "2025-12-15T14:10:16.444Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ae/b9/bcc815cee68ef87635edf72f9454dd35cef8492d2670f5a6b229b5913f0b/llama_stack_client-0.3.4-py3-none-any.whl", hash = "sha256:949c0a6c9a1c925a2b0d930d85b6485bb8d264ba68d02f36aca3c2539cb7b893", size = 425244, upload-time = "2025-12-03T18:59:24.293Z" },
+    { url = "https://files.pythonhosted.org/packages/4d/10/84a4f0ef1cc13f44a692e55bed6a55792671e5320c95a8fd581e02848d61/llama_stack_client-0.3.5-py3-none-any.whl", hash = "sha256:b98acdc660d60839da8b71d5ae59531ba7f059e3e9656ca5ca20edca70f7d6a2", size = 425244, upload-time = "2025-12-15T14:10:14.726Z" },
 ]
 
 [[package]]
@@ -857,6 +866,7 @@ dependencies = [
     { name = "autoevals" },
     { name = "blobfile" },
     { name = "cachetools" },
+    { name = "chardet" },
     { name = "datasets" },
     { name = "faiss-cpu" },
     { name = "fastapi" },
@@ -894,6 +904,7 @@ requires-dist = [
     { name = "autoevals", specifier = ">=0.0.129" },
     { name = "blobfile", specifier = ">=3.0.0" },
     { name = "cachetools", specifier = ">=6.1.0" },
+    { name = "chardet" },
     { name = "datasets", specifier = ">=3.6.0" },
     { name = "faiss-cpu", specifier = ">=1.11.0" },
     { name = "fastapi", specifier = ">=0.115.6" },
@@ -901,8 +912,8 @@ requires-dist = [
     { name = "httpx" },
     { name = "kubernetes", specifier = ">=30.1.0" },
     { name = "litellm", specifier = ">=1.72.1" },
-    { name = "llama-stack", specifier = "==0.3.4" },
-    { name = "llama-stack-client", specifier = "==0.3.4" },
+    { name = "llama-stack", specifier = "==0.3.5" },
+    { name = "llama-stack-client", specifier = "==0.3.5" },
     { name = "mcp", specifier = ">=1.9.4" },
     { name = "ollama", specifier = ">=0.2.0" },
     { name = "openai", specifier = ">=1.100.0" },
