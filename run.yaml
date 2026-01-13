@@ -57,9 +57,19 @@ providers:
       config:
         project: ${env.VERTEX_AI_PROJECT:=}
         location: ${env.VERTEX_AI_LOCATION:=us-central1}
+    # - provider_id: safety-guard
+    #   provider_type: remote::vllm
+    #   config:
+    #     url: ${env.SAFETY_VLLM_URL:=}
+    #     api_token: ${env.SAFETY_VLLM_API_KEY:=token}
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
       config: {}
+  # safety:
+  #   - provider_id: llama-guard
+  #     provider_type: inline::llama-guard
+  #     config:
+  #       excluded_categories: []
   tool_runtime:
     - provider_id: model-context-protocol
       provider_type: remote::model-context-protocol
@@ -68,7 +78,7 @@ providers:
       provider_type: inline::rag-runtime
       config: {}
   vector_io:
-    - provider_id: rhdh-product-docs-1_8
+    - provider_id: faiss
       provider_type: inline::faiss
       config:
         persistence:
@@ -86,17 +96,17 @@ storage:
   backends:
     kv_default:
       type: kv_sqlite
-      db_path: .llama/distributions/ollama/kvstore.db
+      db_path: /tmp/kvstore.db
     sql_default:
       type: sql_sqlite
-      db_path: .llama/distributions/ollama/sql_store.db
+      db_path: /tmp/sql_store.db
     faiss_kv:
       type: kv_sqlite
-      db_path: /app-root/vector_db/rhdh_product_docs/1.8/faiss_store.db
+      db_path: /rag-content/vector_db/rhdh_product_docs/1.8/faiss_store.db
   stores:
     metadata:
       namespace: registry
-      backend: kv_default
+      backend: faiss_kv
     inference:
       table_name: inference_store
       backend: sql_default
@@ -112,16 +122,24 @@ registered_resources:
         embedding_dimension: 768
       model_type: embedding
       provider_id: sentence-transformers
-      provider_model_id: '/app-root/embeddings_model'
+      provider_model_id: /rag-content/embeddings_model
+    # - model_id: ${env.SAFETY_MODEL:=llama-guard3:8b}
+    #   provider_id: safety-guard
+    #   provider_model_id: ${env.SAFETY_MODEL:=llama-guard3:8b}
+    #   model_type: llm
+    #   metadata: {}
+  # shields:
+  #   - shield_id: llama-guard-shield
+  #     provider_id: llama-guard
+  #     provider_shield_id: safety-guard/${env.SAFETY_MODEL:=llama-guard3:8b}
   tool_groups:
     - provider_id: rag-runtime
       toolgroup_id: builtin::rag
-  vector_stores:
-    - vector_store_id: rhdh-product-docs-1_8
-      embedding_dimension: 768
+  vector_dbs:
+    - vector_db_id: rhdh-product-docs-1_8
       embedding_model: sentence-transformers/all-mpnet-base-v2
-      provider_id: rhdh-product-docs-1_8
-      provider_vector_store_id: rhdh-product-docs-1_8
+      embedding_dimension: 768
+      provider_id: faiss
 server:
   auth:
   host:
