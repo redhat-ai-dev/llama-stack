@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:release-1.8-lcs
+RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:experimental-release-1.8-lcs
 VENV := $(CURDIR)/scripts/python-scripts/.venv
 PYTHON := $(VENV)/bin/python3
 PIP := $(VENV)/bin/pip3
@@ -36,9 +36,8 @@ help: ## Show this help screen
 		awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-33s\033[0m %s\n", $$1, $$2}'
 	@echo ''
 
-# TODO (Jdubrick): Replace reference to lightspeed-core/lightspeed-providers once bug is addressed.
 update-question-validation:
-	curl -o ./config/providers.d/inline/safety/lightspeed_question_validity.yaml https://raw.githubusercontent.com/Jdubrick/lightspeed-providers/refs/heads/devai/resources/external_providers/inline/safety/lightspeed_question_validity.yaml
+	curl -o ./config/providers.d/inline/safety/lightspeed_question_validity.yaml https://raw.githubusercontent.com/lightspeed-core/lightspeed-providers/refs/tags/0.1.17/resources/external_providers/inline/safety/lightspeed_question_validity.yaml
 
 $(VENV)/bin/activate: ./scripts/python-scripts/requirements.txt
 	python3 -m venv $(VENV)

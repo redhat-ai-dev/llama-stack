@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 version: 2
-image_name: redhat-ai-dev-llama-stack
+image_name: redhat-ai-dev-llama-stack-no-guard
 apis:
   - agents
   - inference
@@ -57,19 +57,9 @@ providers:
       config:
         project: ${env.VERTEX_AI_PROJECT:=}
         location: ${env.VERTEX_AI_LOCATION:=us-central1}
-    - provider_id: safety-guard
-      provider_type: remote::vllm
-      config:
-        url: ${env.SAFETY_URL:=http://host.docker.internal:11434/v1}
-        api_token: ${env.SAFETY_API_KEY:=token}
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
       config: {}
-  safety:
-    - provider_id: llama-guard
-      provider_type: inline::llama-guard
-      config:
-        excluded_categories: []
   tool_runtime:
     - provider_id: model-context-protocol
       provider_type: remote::model-context-protocol
@@ -123,15 +113,6 @@ registered_resources:
       model_type: embedding
       provider_id: sentence-transformers
       provider_model_id: /rag-content/embeddings_model
-    - model_id: ${env.SAFETY_MODEL:=llama-guard3:8b}
-      provider_id: safety-guard
-      provider_model_id: ${env.SAFETY_MODEL:=llama-guard3:8b}
-      model_type: llm
-      metadata: {}
-  shields:
-    - shield_id: llama-guard-shield
-      provider_id: llama-guard
-      provider_shield_id: safety-guard/${env.SAFETY_MODEL:=llama-guard3:8b}
   tool_groups:
     - provider_id: rag-runtime
       toolgroup_id: builtin::rag
