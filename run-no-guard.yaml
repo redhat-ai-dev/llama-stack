@@ -117,7 +117,7 @@ registered_resources:
     - provider_id: rag-runtime
       toolgroup_id: builtin::rag
   vector_stores:
-    - vector_store_id: vs_3d47e06c-ac95-49b6-9833-d5e6dd7252dd
+    - vector_store_id: vs_3d47e06c-ac95-49b6-9833-d5e6dd7252dd # see readme for this value
       embedding_model: sentence-transformers//rag-content/embeddings_model
       embedding_dimension: 768
       provider_id: rhdh-docs
