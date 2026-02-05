@@ -13,24 +13,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-FROM registry.access.redhat.com/ubi9/python-312:9.7@sha256:92c71d1e64cf84b9aa6e8e81555397175b9367298b456d24eac5b55ab41fdab9 AS builder
+ARG TAG="dev-latest"
+FROM quay.io/lightspeed-core/lightspeed-stack:${TAG} AS builder
+
 USER root
+
 ENV UV_COMPILE_BYTECODE=0 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=0
 
 WORKDIR /app-root
 
-RUN dnf install -y gcc python3.12-devel make && \
-    dnf clean all && \
-    pip3.12 install uv
+RUN pip3.12 install uv
 
-COPY ./pyproject.toml ./
+# Install build tools needed for compiling C++ extensions (e.g., madoka)
+RUN microdnf install -y gcc-c++ python3.12-devel && microdnf clean all
 
-RUN uv sync --no-dev
+COPY ./pyproject.toml ./uv.lock LICENSE ./
+
+# export to requirements to add ontop of deps. built in from LCORE
+RUN uv export --locked --no-hashes --no-header --no-annotate --no-dev --format requirements.txt > requirements.txt
+
+# use 'unsafe-best-match' to get all indices and then match
+# instead of first match wins. Ensures extra index url is used
+RUN uv pip install -r requirements.txt \
+    --extra-index-url https://download.pytorch.org/whl/cpu \
+    --index-strategy unsafe-best-match
 
 FROM registry.access.redhat.com/ubi9/python-312-minimal:9.7@sha256:2ac60c655288a88ec55df5e2154b9654629491e3c58b5c54450fb3d27a575cb6
-ARG APP_ROOT=/app-root
+
+USER root
+
 WORKDIR /app-root
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -40,24 +53,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=UTF-8 \
     LANG=en_US.UTF-8
 
-COPY --from=builder --chown=1001:1001 /app-root/.venv ./.venv
+COPY --from=builder --chown=1001:1001 /app-root /app-root
 
-COPY --chown=1001:1001 ./run.yaml ./scripts/entrypoint.sh ./
+# checked by konflux
+COPY --from=builder --chown=1001:1001 /app-root/LICENSE /licenses/
 
-COPY --chown=1001:1001 ./config/ ./config
-
-RUN chmod +x entrypoint.sh
+COPY --chown=1001:1001 ./run.yaml ./lightspeed-stack.yaml ./
+COPY --chown=1001:1001 ./config/ ./config/
+COPY --chown=1001:1001 --chmod=755 ./scripts/entrypoint.sh ./
 
 ENV PATH="/app-root/.venv/bin:$PATH"
 
-EXPOSE 8321
+EXPOSE 8080
 
-ENTRYPOINT ["./entrypoint.sh"]
-
-USER root
-
-RUN mkdir -p /licenses
-COPY LICENSE /licenses/
+ENTRYPOINT ["./entrypoint.sh", "/app-root/.venv/bin/python3.12"]
 
 USER 1001
 
