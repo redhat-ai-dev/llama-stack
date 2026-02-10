@@ -28,7 +28,7 @@
 ## Latest Stable Release
 
 ```
-quay.io/redhat-ai-dev/llama-stack:0.1.1
+quay.io/redhat-ai-dev/llama-stack:0.1.3
 ```
 
 ## Latest Developer Release
