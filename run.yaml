@@ -40,14 +40,14 @@ providers:
     - provider_id: ${env.ENABLE_VLLM:+vllm}
       provider_type: remote::vllm
       config:
-        url: ${env.VLLM_URL:=}
+        base_url: ${env.VLLM_URL:=}
         api_token: ${env.VLLM_API_KEY:=}
         max_tokens: ${env.VLLM_MAX_TOKENS:=4096}
         tls_verify: ${env.VLLM_TLS_VERIFY:=true}
     - provider_id: ${env.ENABLE_OLLAMA:+ollama}
       provider_type: remote::ollama
       config:
-        url: ${env.OLLAMA_URL:=http://localhost:11434}
+        base_url: ${env.OLLAMA_URL:=http://localhost:11434/v1}
     - provider_id: ${env.ENABLE_OPENAI:+openai}
       provider_type: remote::openai
       config:
@@ -60,7 +60,7 @@ providers:
     - provider_id: safety-guard
       provider_type: remote::vllm
       config:
-        url: ${env.SAFETY_URL:=http://host.docker.internal:11434/v1}
+        base_url: ${env.SAFETY_URL:=http://host.docker.internal:11434/v1}
         api_token: ${env.SAFETY_API_KEY:=token}
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
@@ -78,12 +78,12 @@ providers:
       provider_type: inline::rag-runtime
       config: {}
   vector_io:
-    - provider_id: faiss
+    - provider_id: rhdh-docs
       provider_type: inline::faiss
       config:
         persistence:
           namespace: vector_io::faiss
-          backend: faiss_kv
+          backend: kv_rag
   files:
     - provider_id: localfs
       provider_type: inline::localfs
@@ -100,13 +100,13 @@ storage:
     sql_default:
       type: sql_sqlite
       db_path: /tmp/sql_store.db
-    faiss_kv:
+    kv_rag:
       type: kv_sqlite
       db_path: /rag-content/vector_db/rhdh_product_docs/1.8/faiss_store.db
   stores:
     metadata:
       namespace: registry
-      backend: faiss_kv
+      backend: kv_default
     inference:
       table_name: inference_store
       backend: sql_default
@@ -135,11 +135,16 @@ registered_resources:
   tool_groups:
     - provider_id: rag-runtime
       toolgroup_id: builtin::rag
-  vector_dbs:
-    - vector_db_id: rhdh-product-docs-1_8
-      embedding_model: sentence-transformers/all-mpnet-base-v2
+  vector_stores:
+    - vector_store_id: vs_54e272b3-6701-4853-869c-487768f42d44 # see readme for this value
+      embedding_model: sentence-transformers//rag-content/embeddings_model
       embedding_dimension: 768
-      provider_id: faiss
+      provider_id: rhdh-docs
+vector_stores:
+  default_provider_id: rhdh-docs
+  default_embedding_model:
+    provider_id: sentence-transformers
+    model_id: /rag-content/embeddings_model
 server:
   auth:
   host:

@@ -16,5 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+PYTHON_CMD="$@"
 
-exec llama stack run run.yaml
+${PYTHON_CMD} /app-root/src/lightspeed_stack.py --config /app-root/lightspeed-stack.yaml

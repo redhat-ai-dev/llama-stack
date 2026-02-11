@@ -1,7 +1,7 @@
 # Redhat-AI-Dev Llama Stack
 
 [![Apache2.0 License](https://img.shields.io/badge/license-Apache2.0-brightgreen.svg)](LICENSE)
-[![Llama Stack Version](https://img.shields.io/badge/llama_stack-v0.3.5-blue)](https://llamastack.github.io/docs/v0.3.5)
+[![Llama Stack Version](https://img.shields.io/badge/llama_stack-v0.4.3-blue)](https://llamastack.github.io/docs/v0.4.3)
 [![Python Version](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/downloads/release/python-3120/)
 
 - [Image Availability](#image-availability)
@@ -25,16 +25,10 @@
 
 # Image Availability
 
-## Latest Stable Release
+## Developer Release (Library Mode)
 
 ```
-quay.io/redhat-ai-dev/llama-stack:0.1.1
-```
-
-## Latest Developer Release
-
-```
-quay.io/redhat-ai-dev/llama-stack:latest
+quay.io/redhat-ai-dev/llama-stack:library-0.4.3
 ```
 
 # Usage
@@ -133,26 +127,36 @@ You will need to set the following environment variables to ensure functionality
 
 # Running Locally
 
+## Identifying Vector Store ID
+
+With Llama Stack `0.4.3` the way Vector Stores are created has changed. This means that the RAG content you download locally by running `make get-rag` contains a generated Vector Store ID. In order for RAG to work properly you need to navigate to `/vector_db/rhdh_product_docs/<docs number>/llama-stack.yaml` and find the `vector_stores` section, it should look like:
+
 ```
-podman run -it -p 8321:8321 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+vector_stores:
+  - embedding_dimension: 768
+    embedding_model: sentence-transformers//rag-content/embeddings_model
+    provider_id: rhdh-product-docs-1_8
+    vector_store_id: vs_3d47e06c-ac95-49b6-9833-d5e6dd7252dd
 ```
 
-Or if using the host network:
+You will need the `vector_store_id` value. After copying that value you will need to update `run.yaml` and `run-no-guard.yaml`. The `vector_store_id` you copied will replace the `vector_store_id` in those files.
+
+## Running With Safety Guard
+
 ```
-podman run -it -p 8321:8321 --env-file ./env/values.env --network host -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:latest
+podman run -it -p 8080:8080 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:library-0.4.3
 ```
 
-Latest Lightspeed Core Developer Image:
+## Running Without Safety Guard
+
+You can override the built-in `run.yaml` file by mounting the `run-no-guard.yaml` file to the same path.
 ```
-quay.io/lightspeed-core/lightspeed-stack:dev-latest
+podman run -it -p 8080:8080 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z -v ./run-no-guard.yaml:/app-root/run.yaml:Z quay.io/redhat-ai-dev/llama-stack:library-0.4.3
 ```
 
-To run Lightspeed Core (Llama Stack should be running):
-```
-podman run -it -p 8080:8080 -v ./lightspeed-stack.yaml:/app-root/lightspeed-stack.yaml:Z quay.io/lightspeed-core/lightspeed-stack:dev-latest
-```
+## Running With Host Network
 
-**Note:** If you have built your own version of Lightspeed Core you can replace the image referenced with your own build. Additionally, you can use the Llama Stack container along with the `lightspeed-stack.yaml` file to run Lightspeed Core locally with `uv` from their [repository](https://github.com/lightspeed-core/lightspeed-stack).
+If using host network, you will need to add the `--network host` flag to the relevant run commands above.
 
 # Running on a Cluster
 
