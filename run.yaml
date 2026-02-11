@@ -60,7 +60,7 @@ providers:
     - provider_id: safety-guard
       provider_type: remote::vllm
       config:
-        url: ${env.SAFETY_URL:=http://host.docker.internal:11434/v1}
+        base_url: ${env.SAFETY_URL:=http://host.docker.internal:11434/v1}
         api_token: ${env.SAFETY_API_KEY:=token}
     - provider_id: sentence-transformers
       provider_type: inline::sentence-transformers
