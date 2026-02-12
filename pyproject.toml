@@ -1,6 +1,6 @@
 [project]
 name = "llama-stack-runner"
-version = "0.1.3"
+version = "0.1.4"
 description = "Llama Stack runner"
 authors = []
 dependencies = [

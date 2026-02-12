@@ -91,7 +91,7 @@ providers:
         storage_dir: /tmp/llama-stack-files
         metadata_store:
           table_name: files_metadata
-          backend: sql_default
+          backend: sql_files
 storage:
   backends:
     kv_default:
@@ -100,9 +100,12 @@ storage:
     sql_default:
       type: sql_sqlite
       db_path: /tmp/sql_store.db
+    sql_files:
+      type: sql_sqlite
+      db_path: /rag-content/vector_db/rhdh_product_docs/1.9/files_metadata.db
     faiss_kv:
       type: kv_sqlite
-      db_path: /rag-content/vector_db/rhdh_product_docs/1.8/faiss_store.db
+      db_path: /rag-content/vector_db/rhdh_product_docs/1.9/faiss_store.db
   stores:
     metadata:
       namespace: registry
