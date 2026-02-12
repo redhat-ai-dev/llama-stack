@@ -29,6 +29,12 @@ COPY ./pyproject.toml ./
 
 RUN uv sync --no-dev
 
+# Patch llama-stack 0.3.5 tool_executor to pass through file attributes
+# (filename, doc_url, etc.) in Responses API file_search_call results.
+# See: https://github.com/redhat-ai-dev/llama-stack/patches/
+COPY ./patches/fix_tool_executor_attributes.py /tmp/fix_tool_executor_attributes.py
+RUN .venv/bin/python /tmp/fix_tool_executor_attributes.py && rm /tmp/fix_tool_executor_attributes.py
+
 FROM registry.access.redhat.com/ubi9/python-312-minimal:9.7@sha256:2ac60c655288a88ec55df5e2154b9654629491e3c58b5c54450fb3d27a575cb6
 ARG APP_ROOT=/app-root
 WORKDIR /app-root
