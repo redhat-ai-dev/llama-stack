@@ -13,8 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-ARG TAG="dev-20260226-ca21850"
-FROM quay.io/lightspeed-core/lightspeed-stack:${TAG} AS builder
+FROM quay.io/lightspeed-core/lightspeed-stack:dev-20260316-b2f54cf AS builder
 
 USER root
 
@@ -58,7 +57,7 @@ COPY --from=builder --chown=1001:1001 /app-root /app-root
 # checked by konflux
 COPY --from=builder --chown=1001:1001 /app-root/LICENSE /licenses/
 
-COPY --chown=1001:1001 ./run.yaml ./lightspeed-stack.yaml ./
+COPY --chown=1001:1001 ./config.yaml ./lightspeed-stack.yaml ./
 COPY --chown=1001:1001 ./config/ ./config/
 COPY --chown=1001:1001 --chmod=755 ./scripts/entrypoint.sh ./
 
@@ -78,7 +77,7 @@ LABEL io.k8s.description="Red Hat Developer Hub Lightspeed Llama Stack"
 LABEL io.k8s.display-name="Red Hat Developer Hub Lightspeed Llama Stack"
 LABEL io.openshift.tags="developerhub,rhdh,lightspeed,ai,assistant,llama"
 LABEL name=rhdh-lightspeed-llama-stack
-LABEL release=1.8
+LABEL release=1.10
 LABEL url="https://github.com/redhat-ai-dev/llama-stack"
 LABEL vendor="Red Hat, Inc."
 LABEL version=0.1.1

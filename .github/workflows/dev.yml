@@ -24,7 +24,7 @@ env:
   IMAGE_REGISTRY: quay.io
   REGISTRY_ORG: redhat-ai-dev
   CONTAINER_FILE: Containerfile
-  TAG_BASE: library-0.4.3
+  TAG_BASE: library-0.5.2
 
 jobs:
   build-and-push:

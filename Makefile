@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:release-1.9-lls-0.4.3
+RAG_CONTENT_IMAGE ?= quay.io/redhat-ai-dev/rag-content:release-1.9-lls-0.4.3-d0444cd9b57222ec9bdbaa36354337480a2ecf97
 VENV := $(CURDIR)/scripts/python-scripts/.venv
 PYTHON := $(VENV)/bin/python3
 PIP := $(VENV)/bin/pip3
@@ -55,3 +55,10 @@ validate-prompt-templates: $(VENV)/bin/activate
 
 update-prompt-templates: $(VENV)/bin/activate
 	$(call run_sync,update)
+
+.PHONY: sync-upstream-config validate-upstream-config
+sync-upstream-config: ## Sync upstream config and image pins from lightspeed-configs
+	bash ./scripts/sync/upstream-config.sh update
+
+validate-upstream-config: ## Validate synced upstream config and image pins have not drifted
+	bash ./scripts/sync/upstream-config.sh validate

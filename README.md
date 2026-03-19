@@ -1,7 +1,7 @@
 # Redhat-AI-Dev Llama Stack
 
 [![Apache2.0 License](https://img.shields.io/badge/license-Apache2.0-brightgreen.svg)](LICENSE)
-[![Llama Stack Version](https://img.shields.io/badge/llama_stack-v0.4.3-blue)](https://llamastack.github.io/docs/v0.4.3)
+[![Llama Stack Version](https://img.shields.io/badge/llama_stack-v0.5.2-blue)](https://llamastack.github.io/docs)
 [![Python Version](https://img.shields.io/badge/python-3.12-blue)](https://www.python.org/downloads/release/python-3120/)
 
 - [Image Availability](#image-availability)
@@ -28,7 +28,7 @@
 ## Developer Release (Library Mode)
 
 ```
-quay.io/redhat-ai-dev/llama-stack:library-0.4.3
+quay.io/redhat-ai-dev/llama-stack:library-0.5.2
 ```
 
 # Usage
@@ -97,7 +97,7 @@ For information about these variables see: https://llamastack.github.io/v0.2.18/
 
 ## Configuring RAG
 
-The `run.yaml` file that is included in the container image has a RAG tool enabled. In order for this tool to have the necessary reference content, you need to run:
+The `config.yaml` file that is included in the container image has a RAG tool enabled. In order for this tool to have the necessary reference content, you need to run:
 
 ```
 make get-rag
@@ -107,23 +107,29 @@ This will fetch the necessary reference content and add it to your local project
 
 ## Configuring Safety Guards
 
-> [!IMPORTANT]
-> If you want to omit the safety guards for development purposes, you can use [run-no-guard.yaml](./run-no-guard.yaml) instead.
+Safety guards are configured through environment variables in `env/values.env`. To disable safety guards, leave `ENABLE_SAFETY=` empty.
 
-In the main [run.yaml](./run.yaml) file, Llama Guard is enabled by default. In order to avoid issues during startup you will need to ensure you have an instance of Llama Guard running.
+To enable safety guards, set the following:
 
-You can do so by running the following to start an Ollama container with Llama Guard:
+```env
+ENABLE_SAFETY=true
+SAFETY_MODEL=<llama-guard-model-name>
+SAFETY_URL=<url-of-safety-model-server>/v1
+SAFETY_API_KEY=<api-key-if-required>
+```
+
+- `SAFETY_MODEL`: The name of the Llama Guard model being used. Defaults to `llama-guard3:8b`.
+- `SAFETY_URL`: The URL where the safety model is available. For local container runs, use `http://host.containers.internal:11434/v1`.
+- `SAFETY_API_KEY`: The API key required for access to the safety model. Not required for local deployments.
+
+You will also need an instance of Llama Guard running. You can start one locally with Ollama:
 
 ```sh
 podman run -d --name ollama -p 11434:11434 docker.io/ollama/ollama:latest
 podman exec ollama ollama pull llama-guard3:8b
 ```
-**Note:** Ensure the Ollama container is started and the model is ready before trying to query if deploying the containers manually.
 
-You will need to set the following environment variables to ensure functionality:
-- `SAFETY_MODEL`: The name of the Llama Guard model being used. Defaults to `llama-gaurd3:8b`
-- `SAFETY_URL`: The URL where the container is available. Defaults to `http://host.docker.internal:11434/v1`
-- `SAFETY_API_KEY`: The API key required for access to the safety model. Not required for local.
+**Note:** Ensure the Ollama container is started and the model is ready before trying to query if deploying the containers manually.
 
 # Running Locally
 
@@ -139,19 +145,14 @@ vector_stores:
     vector_store_id: vs_3d47e06c-ac95-49b6-9833-d5e6dd7252dd
 ```
 
-You will need the `vector_store_id` value. After copying that value you will need to update `run.yaml` and `run-no-guard.yaml`. The `vector_store_id` you copied will replace the `vector_store_id` in those files.
+You will need the `vector_store_id` value. After copying that value you will need to update `config.yaml`. The `vector_store_id` you copied will replace the `vector_store_id` in that file.
 
-## Running With Safety Guard
+## Running the Container
+
+If you want to enable safety guards, see [Configuring Safety Guards](#configuring-safety-guards) before running.
 
 ```
 podman run -it -p 8080:8080 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z quay.io/redhat-ai-dev/llama-stack:library-0.4.3
-```
-
-## Running Without Safety Guard
-
-You can override the built-in `run.yaml` file by mounting the `run-no-guard.yaml` file to the same path.
-```
-podman run -it -p 8080:8080 --env-file ./env/values.env -v ./embeddings_model:/rag-content/embeddings_model:Z -v ./vector_db/rhdh_product_docs:/rag-content/vector_db/rhdh_product_docs:Z -v ./run-no-guard.yaml:/app-root/run.yaml:Z quay.io/redhat-ai-dev/llama-stack:library-0.4.3
 ```
 
 ## Running With Host Network
@@ -167,9 +168,9 @@ To deploy on a cluster see [DEPLOYMENT.md](./docs/DEPLOYMENT.md).
 | Command | Description |
 | ---- | ----|
 | **get-rag** | Gets the RAG data and the embeddings model from the rag-content image registry to your local project directory |
+| **sync-upstream-config** | Syncs `config.yaml`, `env/default-values.env`, `lightspeed-stack.yaml`, and image pins from upstream |
+| **validate-upstream-config** | Validates that synced upstream files and image pins have not drifted |
 | **update-question-validation** | Updates the question validation content in `providers.d` |
-| **validate-prompt-templates** | Validates prompt values in run.yaml. |
-| **update-prompt-templates** | Updates the prompt values in run.yaml. |
 
 # Contributing
 
